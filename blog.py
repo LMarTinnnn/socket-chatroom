@@ -97,8 +97,7 @@ def login():
             session['logged_in'] = True
             flash('Logged in successfully')
             return redirect(url_for('show_entries'))
-    else:
-        return render_template('login.html', error=error)
+    return render_template('login.html', error=error)
 
 
 @app.route('/logout')
@@ -112,4 +111,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80)

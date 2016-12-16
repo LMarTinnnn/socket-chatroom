@@ -15,6 +15,7 @@
     {% for entry in entries %}
       <li><h2>{{ entry.title }}</h2></li>
       <li><p>{{ entry.text|safe}}</p></li>
+      <hr />
     {% else %}
       <li><em>Unbelievable. No entry here so far</em></li>
     {% endfor %}
