@@ -37,7 +37,7 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as file:
             db.cursor().executescript(file.read())
         db.commit()
-        print('初始化完毕')
+        print('Initialiazed')
 
 
 def get_db():
