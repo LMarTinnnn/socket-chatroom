@@ -1,5 +1,5 @@
-import config_override
-from config_default import configs
+import conf.config_override
+from conf.config_default import configs
 
 
 def merge(default, override):
@@ -15,5 +15,5 @@ def merge(default, override):
     return merged_dict
 
 
-override_config = config_override.configs
+override_config = conf.config_override.configs
 configs = merge(configs, override_config)

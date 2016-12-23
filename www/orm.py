@@ -12,6 +12,7 @@ def log(sql, args=()):
 
 __pool = None
 
+
 @asyncio.coroutine
 def create_db_pool(loop, user, password, db, **kwargs):
     """
