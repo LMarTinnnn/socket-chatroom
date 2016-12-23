@@ -83,13 +83,7 @@ def get_page_index(page_str):
 @get('/')
 @asyncio.coroutine
 def index(request):
-    summary = '我是简介哈哈哈哈'
-    blogs = [
-        Blog(id='1', name='Test Blog', summary=summary, created_at=time.time() - 120),
-        Blog(id='2', name='Something New', summary=summary, created_at=time.time() - 3600),
-        Blog(id='3', name='Learn Swift', summary=summary, created_at=time.time() - 6049801212)
-    ]
-    blogs = yield from Blog.find_all()
+    blogs = yield from Blog.find_all(limit=8, order_by='created_at DESC')
     return dict(
         __template__='index.html',
         blogs=blogs,
@@ -111,10 +105,11 @@ def signin():
     }
 
 @get('/manage/blogs')
-def manage_blog(*, page=1):
+def manage_blog(request, *, page=1):
     return {
         '__template__': 'manage_blogs.html',
-        'page_index': page
+        '__user__': request.__user__,
+	'page_index': page
     }
 
 
@@ -228,17 +223,19 @@ def signout(request):
 
 
 @get('/api/blogs/{blog_id}')
-async def get_json_blog(*, blog_id):
-    blog = await Blog.find_by_primary_key(blog_id)
+@asyncio.coroutine
+def get_json_blog(*, blog_id):
+    blog = yield from Blog.find_by_primary_key(blog_id)
     if not blog:
         raise APIResourceNotFoundError('No such blog')
     return blog
 
 
 @get('/api/blogs')
-async def get_blogs(*, page=1):
+@asyncio.coroutine
+def get_blogs(*, page=1):
     page_index = get_page_index(page)
-    blog_count = await Blog.count_rows('id')
+    blog_count = yield from Blog.count_rows('id')
     p = Page(blog_count, page_index)
     if blog_count == 0:
         return dict(
@@ -246,7 +243,7 @@ async def get_blogs(*, page=1):
             blogs=()
         )
 
-    blogs = await Blog.find_all(order_by='created_at DESC', limit=(p.offset, p.limit))
+    blogs = yield from Blog.find_all(order_by='created_at DESC', limit=(p.offset, p.limit))
     # limit 用来标记从第几行开始取值 取多少个
     return dict(
         page=p,
