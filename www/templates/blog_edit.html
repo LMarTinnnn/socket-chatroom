@@ -6,7 +6,7 @@
 
 <script>
 var
-    ID = '{{ id }}',
+    ID = '{{ id }}';
     action = '{{ action }}';
 function initVM(blog) {
     var vm = new Vue({
@@ -21,7 +21,7 @@ function initVM(blog) {
                         $form.showFormError(err);
                     }
                     else {
-                        return location.assign('/api/blogs/' + r.id);
+                        return location.assign('/blog/' + r.id);
                     }
                 });
             }

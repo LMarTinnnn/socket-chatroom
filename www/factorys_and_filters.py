@@ -39,7 +39,7 @@ def data_factory(app, handler):
                 logging.info('[Data Factory]: request form: %s' % str(request.__data__))
         elif request.method == 'GET':
             query_string = request.query_string
-            query_data = {k: v for k, v in parse.parse_qs(query_string, True).items()}
+            query_data = {k: v[0] if len(v) == 1 else v for k, v in parse.parse_qs(query_string, True).items()}
             request.__data__ = query_data
         return (yield from handler(request))
     return parse_data
@@ -130,4 +130,3 @@ def datetime_filter(time_stamp):
     else:
         dt = datetime.datetime.fromtimestamp(time_stamp)
         return '%s年%s月%s日' % (dt.year, dt.month, dt.day)
-

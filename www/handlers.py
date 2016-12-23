@@ -4,7 +4,6 @@
 import re
 import time
 import json
-import base64
 import logging
 import hashlib
 import asyncio
@@ -15,7 +14,7 @@ import markdown2
 from conf.config import configs
 from async_web_framework import get, post
 from model import User, Blog, Comment, create_id
-from apis import APIResourceNotFoundError, APIValueError, APIError, APIPermissionError
+from apis import APIResourceNotFoundError, APIValueError, APIError, APIPermissionError, Page
 
 
 # -------------------------------cookie 处理函数------------------------------------
@@ -69,6 +68,17 @@ def text2html(text):
     return ''.join(lines)
 
 
+def get_page_index(page_str):
+    p = 1
+    try:
+        p = int(page_str)
+    except ValueError as e:
+        pass
+    if p < 1:
+        p = 1
+    return p
+
+
 # ------------------------------ url handler --------------------------------------
 @get('/')
 @asyncio.coroutine
@@ -100,12 +110,29 @@ def signin():
         '__template__': 'signin.html'
     }
 
+@get('/manage/blogs')
+def manage_blog(*, page=1):
+    return {
+        '__template__': 'manage_blogs.html',
+        'page_index': page
+    }
+
 
 @get('/manage/blogs/create')
-def crete_blog(request):
+def crete_blog(request):  # 创建日志
     return {
         '__template__': 'blog_edit.html',
         'id': '',
+        'action': '/api/blogs',
+        '__user__': request.__user__
+    }
+
+
+@get('/manage/blogs/edit')
+def edit_blog(request, *, blog_id):  # 编辑存在的日志
+    return {
+        '__template__': 'blog_edit.html',
+        'id': blog_id,
         'action': '/api/blogs',
         '__user__': request.__user__
     }
@@ -115,7 +142,6 @@ def crete_blog(request):
 @asyncio.coroutine
 def read_blog(blog_id, request):
     blog = yield from Blog.find_by_primary_key(blog_id)
-    print(blog)
     if not blog:
         raise APIResourceNotFoundError('blog', '似乎来到了没有知识的荒原')
     comments = yield from Comment.find_all(where='blog_id=?', args=[blog_id], order_by='created_at DESC')
@@ -201,6 +227,33 @@ def signout(request):
     return resp
 
 
+@get('/api/blogs/{blog_id}')
+async def get_json_blog(*, blog_id):
+    blog = await Blog.find_by_primary_key(blog_id)
+    if not blog:
+        raise APIResourceNotFoundError('No such blog')
+    return blog
+
+
+@get('/api/blogs')
+async def get_blogs(*, page=1):
+    page_index = get_page_index(page)
+    blog_count = await Blog.count_rows('id')
+    p = Page(blog_count, page_index)
+    if blog_count == 0:
+        return dict(
+            page=p,
+            blogs=()
+        )
+
+    blogs = await Blog.find_all(order_by='created_at DESC', limit=(p.offset, p.limit))
+    # limit 用来标记从第几行开始取值 取多少个
+    return dict(
+        page=p,
+        blogs=blogs
+    )
+
+
 @post('/api/blogs')
 @asyncio.coroutine
 def post_blog(request, *, name, summary, content):
@@ -225,3 +278,14 @@ def post_blog(request, *, name, summary, content):
     yield from blog.save()
     return blog   # blog是dict的子类 在response_factory 会处理成json对象
 
+
+@post('/api/blogs/{blog_id}/delete')
+@asyncio.coroutine
+def delete_blog(request, *, blog_id):
+    check_admin(request)
+    blog_to_delete = yield from Blog.find_by_primary_key(blog_id)
+    if not blog_to_delete:
+        logging.info('blog [%s] does not exist' % blog_id)
+        raise APIPermissionError('blog does not exist')
+    yield from blog_to_delete.delete()
+    return dict(id=blog_id)

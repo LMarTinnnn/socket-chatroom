@@ -9,7 +9,8 @@
     <h2>{{blog.name}}</h2>
     <p><b>作者:</b> {{ blog.user_name }} <b>创建时间:</b> {{ blog.created_at|datetime}}</p>
     <p>SUMMARY : <p>{{ blog.summary }}</p></p>
-    CONTENT : {{ blog.html_content|safe }}
+    CONTENT :
+    <pre class="content">{{ blog.html_content|safe }}</pre>
   </article>
 
   <div class="comments">
@@ -17,7 +18,7 @@
     <div class="comment">
       <p><img class="avatar" src="/static/pics/default_avatar.png" alt="头像">
         {{ comment.user_name }} 创建时间: <b>{{ comment.created_at|datetime }}</p>
-      {{ comment.html_content|safe }}
+      <pre class="content">{{ comment.html_content|safe }}</pre>
     </div>
     {% else %}
     <p>No Comment So Far</p>
