@@ -16,14 +16,13 @@ from async_web_framework import get, post
 from model import User, Blog, Comment, create_id
 from apis import APIResourceNotFoundError, APIValueError, APIError, APIPermissionError, Page
 
-
 # -------------------------------cookie 处理函数------------------------------------
 COOKIE_NAME = 'LM_blog_cookie'
 _COOKIE_KEY = configs['session']['secret']
 
 
 def user2cookie(user, max_age):
-    expires = str(int(time.time() + max_age))   # time.time()'s value is float
+    expires = str(int(time.time() + max_age))  # time.time()'s value is float
     key = '%s-%s-%s-%s' % (user.id, user.password, expires, _COOKIE_KEY)
     sha1_key = hashlib.sha1(key.encode()).hexdigest()
     cookie = '-'.join([user.id, expires, sha1_key])
@@ -104,12 +103,13 @@ def signin():
         '__template__': 'signin.html'
     }
 
+
 @get('/manage/blogs')
 def manage_blog(request, *, page=1):
     return {
         '__template__': 'manage_blogs.html',
         '__user__': request.__user__,
-	'page_index': page
+        'page_index': page
     }
 
 
@@ -128,7 +128,7 @@ def edit_blog(request, *, blog_id):  # 编辑存在的日志
     return {
         '__template__': 'blog_edit.html',
         'id': blog_id,
-        'action': '/api/blogs',
+        'action': '/api/blogs/edit/',
         '__user__': request.__user__
     }
 
@@ -165,7 +165,7 @@ def api_signup(*, email, name, password):
         raise APIValueError('name')
     if not email or not re.match(_RE_EMAIL, email):
         raise APIValueError('email')
-    if not password or not re.match(_RE_SHA1, password):   # js 传过来的是经过一次sha1加密的密码
+    if not password or not re.match(_RE_SHA1, password):  # js 传过来的是经过一次sha1加密的密码
         raise APIValueError('password')
 
     user = yield from User.find_all(where='email=?', args=[email])
@@ -214,7 +214,7 @@ def api_signin(*, email, password):
 
 
 @get('/api/signout')
-def signout(request):
+def api_signout(request):
     referer = request.get('Referer')
     resp = web.HTTPFound(referer or '/')
     resp.set_cookie(COOKIE_NAME, '-delete-', max_age=0, httponly=True)
@@ -224,7 +224,7 @@ def signout(request):
 
 @get('/api/blogs/{blog_id}')
 @asyncio.coroutine
-def get_json_blog(*, blog_id):
+def api_get_json_blog(*, blog_id):
     blog = yield from Blog.find_by_primary_key(blog_id)
     if not blog:
         raise APIResourceNotFoundError('No such blog')
@@ -233,7 +233,7 @@ def get_json_blog(*, blog_id):
 
 @get('/api/blogs')
 @asyncio.coroutine
-def get_blogs(*, page=1):
+def api_get_blogs(*, page=1):
     page_index = get_page_index(page)
     blog_count = yield from Blog.count_rows('id')
     p = Page(blog_count, page_index)
@@ -253,7 +253,7 @@ def get_blogs(*, page=1):
 
 @post('/api/blogs')
 @asyncio.coroutine
-def post_blog(request, *, name, summary, content):
+def api_create_blog(request, *, name, summary, content):
     check_admin(request)
     if not name or not name.strip():
         raise APIValueError(name, message='标题不能为空')
@@ -273,12 +273,12 @@ def post_blog(request, *, name, summary, content):
     )
 
     yield from blog.save()
-    return blog   # blog是dict的子类 在response_factory 会处理成json对象
+    return blog  # blog是dict的子类 在response_factory 会处理成json对象
 
 
 @post('/api/blogs/{blog_id}/delete')
 @asyncio.coroutine
-def delete_blog(request, *, blog_id):
+def api_delete_blog(request, *, blog_id):
     check_admin(request)
     blog_to_delete = yield from Blog.find_by_primary_key(blog_id)
     if not blog_to_delete:
@@ -286,3 +286,18 @@ def delete_blog(request, *, blog_id):
         raise APIPermissionError('blog does not exist')
     yield from blog_to_delete.delete()
     return dict(id=blog_id)
+
+
+@post('/api/blogs/edit/{blog_id}')
+@asyncio.coroutine
+def api_edit_blog(request, *, name, summary, content, blog_id):
+    check_admin(request)
+    blog_to_edit = yield from Blog.find_by_primary_key(blog_id)
+    if not blog_to_edit:
+        logging.info('blog [%s] does not exist' % blog_id)
+        raise APIPermissionError('blog does not exist')
+    blog_to_edit.name = name
+    blog_to_edit.summary = summary
+    blog_to_edit.content = content
+    yield from blog_to_edit.update()
+    return blog_to_edit
