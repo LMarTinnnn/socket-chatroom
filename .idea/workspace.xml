@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a9cde9db-97e8-47f2-96a9-0962df9c9534" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/test.iml" afterPath="$PROJECT_DIR$/.idea/test.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/app.py" afterPath="$PROJECT_DIR$/www/app.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/factorys_and_filters.py" afterPath="$PROJECT_DIR$/www/factorys_and_filters.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/handlers.py" afterPath="$PROJECT_DIR$/www/handlers.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/orm.py" afterPath="$PROJECT_DIR$/www/orm.py" />
     </list>
     <ignored path="test.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,11 +23,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="app.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="app.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/www/app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="552">
-              <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+            <state relative-caret-position="211">
+              <caret line="68" column="66" selection-start-line="68" selection-start-column="66" selection-end-line="68" selection-end-column="66" />
               <folding>
                 <element signature="e#84#93#0" expanded="true" />
               </folding>
@@ -39,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="factorys_and_filters.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="factorys_and_filters.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/factorys_and_filters.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-723">
-              <caret line="73" column="29" selection-start-line="73" selection-start-column="19" selection-end-line="73" selection-end-column="29" />
+            <state relative-caret-position="220">
+              <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
               <folding>
                 <element signature="e#48#59#0" expanded="true" />
               </folding>
@@ -60,10 +56,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/client.py" />
-        <option value="$PROJECT_DIR$/www/app.py" />
         <option value="$PROJECT_DIR$/www/handlers.py" />
         <option value="$PROJECT_DIR$/www/orm.py" />
         <option value="$PROJECT_DIR$/www/factorys_and_filters.py" />
+        <option value="$PROJECT_DIR$/www/app.py" />
       </list>
     </option>
   </component>
@@ -552,22 +548,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/app.py">
+    <entry file="file://$PROJECT_DIR$/www/factorys_and_filters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="70" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+        <state relative-caret-position="220">
+          <caret line="114" column="27" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
           <folding>
-            <element signature="e#84#93#0" expanded="true" />
+            <element signature="e#48#59#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/factorys_and_filters.py">
+    <entry file="file://$PROJECT_DIR$/www/app.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-723">
-          <caret line="73" column="29" selection-start-line="73" selection-start-column="19" selection-end-line="73" selection-end-column="29" />
+        <state relative-caret-position="211">
+          <caret line="68" column="66" selection-start-line="68" selection-start-column="66" selection-end-line="68" selection-end-column="66" />
           <folding>
-            <element signature="e#48#59#0" expanded="true" />
+            <element signature="e#84#93#0" expanded="true" />
           </folding>
         </state>
       </provider>
