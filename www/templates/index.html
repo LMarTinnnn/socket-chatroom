@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}LMarTinnn{% endblock %}
+
+{% block content %}
+  <h3>Recent</h3>
+  <div class="contents">
+    {% for blog in blogs %}
+      <article class="blogs">
+        <h3><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h3>
+        <p>发表于: {{ blog.created_at|datetime }}</p>
+        <p>{{ blog.summary }}...</p>
+        <p><a href="/blog/{{ blog.id }}"><b>继续阅读</b></a></p>
+      </article>
+    {% else %}
+      <p>Unbelievable! No article so far</p>
+    {% endfor %}
+  </div>
+
+
+{% endblock %}

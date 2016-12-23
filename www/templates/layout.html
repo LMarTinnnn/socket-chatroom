@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    {% block meta%}<!--block for meata-->{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/mycss.css">
+    <link rel="stylesheet" href="/static/css/uikit.min.css">
+    <link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/sha1.min.js"></script>
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/awesome.js"></script>
+    {% block beforehead %}{% endblock %}
+  </head>
+    <body>
+      <div class="icon-bar">
+        <ul class="user">
+          {% if __user__ %}
+          {% if __user__.admin %}
+          <li><a href="/manage/blogs/create">编辑</a></li>
+          {% endif %}
+          <li><img src="{{ __user__.avatar }}" alt="Avatar" class='avatar'>
+            <b>{{ __user__.name }}</b></li>
+          <li><a href="/api/signout">登出</a></li>
+          {% else %}
+          <li><a href="/signin">登录</a></li>
+          <li><a href="/signup">注册</a></li>
+          {% endif %}
+        </ul>
+        <ul class='icon'>
+          <li><a href="https://github.com/LMarTinnnn" class="uk-icon-small uk-icon-github"></a></li>
+          <li><a href="/" class="uk-icon-small uk-icon-instagram"></a></li>
+          <li><a href="/" class="uk-icon-small uk-icon-weibo"></a></li>
+          <li><a href="/" class="uk-icon-small uk-icon-apple"></a></li>
+        </ul>
+      </div>
+      <header>
+        <div class="logo">
+          <a href="/"><img src="/static/pics/logo.jpg" alt="Logo" ></a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Photo</a></li>
+            <li><a href="#">Message Board</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        {% block content %}
+        {% endblock %}
+      </main>
+
+      <footer>
+        <div class="left">
+          <p>
+            <img src="/static/pics/logo.jpg" alt="log" width="50px" height="50px">
+            <a href="#">About Me</a>
+            / Built at 2016
+          </p>
+        </div>
+        <div class="right">
+          <form class="search" action="/search" method="get">
+            <input type="text" name="artical_name">
+            <input type="submit" value="搜索">
+          </form>
+          <p>Copyright &copy; 2016. LMarTinnnn All Right Reserved</p>
+          <p>Poweredby Aliyun</p>
+        </div>
+      </footer>
+    </body>
+</html>

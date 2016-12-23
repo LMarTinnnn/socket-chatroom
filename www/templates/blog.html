@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ blog.name }}{% endblock %}
+
+
+{% block content %}
+
+  <article class="blog">
+    <h2>{{blog.name}}</h2>
+    <p><b>作者:</b> {{ blog.user_name }} <b>创建时间:</b> {{ blog.created_at|datetime}}</p>
+    <p>SUMMARY : <p>{{ blog.summary }}</p></p>
+    CONTENT : {{ blog.html_content|safe }}
+  </article>
+
+  <div class="comments">
+    {% for comment in comment %}
+    <div class="comment">
+      <p><img class="avatar" src="/static/pics/default_avatar.png" alt="头像">
+        {{ comment.user_name }} 创建时间: <b>{{ comment.created_at|datetime }}</p>
+      {{ comment.html_content|safe }}
+    </div>
+    {% else %}
+    <p>No Comment So Far</p>
+    {% endfor %}
+  </div>
+
+{% endblock %}
