@@ -14,12 +14,6 @@ from async_web_framework import add_routes, add_static
 from factorys_and_filters import logger_factory, data_factory, response_factory, datetime_filter, auth_factory
 
 
-async def mk_server(application, event_loop):
-    srv = await event_loop.create_server(application.make_handler(), '0.0.0.0', 8000)
-    logging.info('[SRV]: Start serving at port [8000]')
-    return srv
-
-
 def init_jinja2(application, **kwargs):
     logging.info('[Jinja2]: Initiating...')
     configs = dict(
@@ -45,8 +39,9 @@ def init_jinja2(application, **kwargs):
     application['__template__'] = env
 
 
-async def init_app(event_loop, host='127.0.0.1', port=8000):
-    await orm.create_db_pool(
+@asyncio.coroutine
+def init_app(event_loop, host='127.0.0.1', port=8000):
+    yield from orm.create_db_pool(
         loop=loop,
         user='blog-data',
         password=' ',
@@ -60,7 +55,7 @@ async def init_app(event_loop, host='127.0.0.1', port=8000):
 
     add_routes(app, 'handlers')
     add_static(app)
-    server = await loop.create_server(
+    server = yield from loop.create_server(
         app.make_handler(),
         host=host,
         port=port

@@ -31,7 +31,8 @@ def user2cookie(user, max_age):
     return cookie
 
 
-async def cookie2user(cookie_str):
+@asyncio.coroutine
+def cookie2user(cookie_str):
     if not cookie_str:
         return None
     else:
@@ -43,7 +44,7 @@ async def cookie2user(cookie_str):
         if int(expires) < time.time():
             return None
 
-        user = await User.find_by_primary_key(user_id)
+        user = yield from User.find_by_primary_key(user_id)
         if not user:
             return None
 
@@ -70,14 +71,15 @@ def text2html(text):
 
 # ------------------------------ url handler --------------------------------------
 @get('/')
-async def index(request):
+@asyncio.coroutine
+def index(request):
     summary = '我是简介哈哈哈哈'
     blogs = [
         Blog(id='1', name='Test Blog', summary=summary, created_at=time.time() - 120),
         Blog(id='2', name='Something New', summary=summary, created_at=time.time() - 3600),
         Blog(id='3', name='Learn Swift', summary=summary, created_at=time.time() - 6049801212)
     ]
-    blogs = await Blog.find_all()
+    blogs = yield from Blog.find_all()
     return dict(
         __template__='index.html',
         blogs=blogs,
@@ -110,12 +112,13 @@ def crete_blog(request):
 
 
 @get('/blog/{blog_id}')
-async def read_blog(blog_id, request):
-    blog = await Blog.find_by_primary_key(blog_id)
+@asyncio.coroutine
+def read_blog(blog_id, request):
+    blog = yield from Blog.find_by_primary_key(blog_id)
     print(blog)
     if not blog:
         raise APIResourceNotFoundError('blog', '似乎来到了没有知识的荒原')
-    comments = await Comment.find_all(where='blog_id=?', args=[blog_id], order_by='created_at DESC')
+    comments = yield from Comment.find_all(where='blog_id=?', args=[blog_id], order_by='created_at DESC')
 
     # escape
     for c in comments:
@@ -135,7 +138,8 @@ _RE_SHA1 = re.compile(r'^[0-9a-f]{40}$')
 
 
 @post('/api/signup')
-async def api_signup(*, email, name, password):
+@asyncio.coroutine
+def api_signup(*, email, name, password):
     if not name or not name.strip():
         raise APIValueError('name')
     if not email or not re.match(_RE_EMAIL, email):
@@ -143,14 +147,14 @@ async def api_signup(*, email, name, password):
     if not password or not re.match(_RE_SHA1, password):   # js 传过来的是经过一次sha1加密的密码
         raise APIValueError('password')
 
-    user = await User.find_all(where='email=?', args=[email])
+    user = yield from User.find_all(where='email=?', args=[email])
     if user:
         raise APIError('register:failed', 'email', 'already exist')
     uid = create_id()
     # 又加密一次
     sha1_password = hashlib.sha1(('%s:%s' % (uid, password)).encode()).hexdigest()
     user = User(id=uid, email=email, name=name, password=sha1_password, avatar='/static/pics/default_avatar.png')
-    await user.save()
+    yield from user.save()
 
     # set cookie
     resp = web.Response(content_type='application/json')
@@ -162,13 +166,14 @@ async def api_signup(*, email, name, password):
 
 
 @post('/api/signin')
-async def api_signin(*, email, password):
+@asyncio.coroutine
+def api_signin(*, email, password):
     if not email:
         raise APIValueError('email', '邮箱不能为空')
     if not password:
         raise APIValueError('password', '密码不能为空')
 
-    user_list = await User.find_all(where='email=?', args=[email])
+    user_list = yield from User.find_all(where='email=?', args=[email])
     if not user_list:
         raise APIError('signin:failed', 'email', '邮箱不存在')
     else:
@@ -197,7 +202,8 @@ def signout(request):
 
 
 @post('/api/blogs')
-async def post_blog(request, *, name, summary, content):
+@asyncio.coroutine
+def post_blog(request, *, name, summary, content):
     check_admin(request)
     if not name or not name.strip():
         raise APIValueError(name, message='标题不能为空')
@@ -216,6 +222,6 @@ async def post_blog(request, *, name, summary, content):
         content=content
     )
 
-    await blog.save()
+    yield from blog.save()
     return blog   # blog是dict的子类 在response_factory 会处理成json对象
 

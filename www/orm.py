@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import asyncio
 import aiomysql
 logging.basicConfig()
 
@@ -11,7 +12,8 @@ def log(sql, args=()):
 
 __pool = None
 
-async def create_db_pool(loop, user, password, db, **kwargs):
+@asyncio.coroutine
+def create_db_pool(loop, user, password, db, **kwargs):
     """
     Create a global database pool
 
@@ -24,7 +26,7 @@ async def create_db_pool(loop, user, password, db, **kwargs):
     """
     logging.info('[DB]: Create database connecting pool')
     global __pool
-    __pool = await aiomysql.create_pool(
+    __pool = yield from aiomysql.create_pool(
         host=kwargs.get('host', 'localhost'),
         # 3306 is the default mysql port
         port=kwargs.get('port', 3306),  # port is an integer
@@ -39,30 +41,33 @@ async def create_db_pool(loop, user, password, db, **kwargs):
     )
 
 
-async def destroy_pool():  # 销毁连接池
+@asyncio.coroutine
+def destroy_pool():  # 销毁连接池
     global __pool
     if __pool is not None:
         __pool.close()
-        await  __pool.wait_closed()
+        yield from __pool.wait_closed()
 
 
-async def select(sql, args=(), number=None):
+@asyncio.coroutine
+def select(sql, args=(), number=None):
     log(sql, args)
-    async with __pool.get() as conn:
-        cur = await conn.cursor(aiomysql.DictCursor)
-        await cur.execute(sql.replace('?', '%s'), args)
-        res = await cur.fetchall()
+    with (yield from __pool) as conn:
+        cur = yield from conn.cursor(aiomysql.DictCursor)
+        yield from cur.execute(sql.replace('?', '%s'), args)
+        res = yield from cur.fetchall()
     print()
     res = res[:number] if number else res
     logging.info('[SQL]: %s row returned' % len(res))
     return res
 
-async def execute(sql, args=()):
+@asyncio.coroutine
+def execute(sql, args=()):
     log(sql, args)
-    async with __pool.get() as conn:
-        cur = await conn.cursor()
+    with (yield from __pool) as conn:
+        cur = yield from conn.cursor()
         try:
-            await cur.execute(sql.replace('?', '%s'), args)
+            yield from cur.execute(sql.replace('?', '%s'), args)
             affected = cur.rowcount
         except:
             conn.rollback()
@@ -216,7 +221,8 @@ class Model(dict, metaclass=MetaModel):
         return value
 
     @classmethod
-    async def find_all(cls, args=None, where=None, **kwargs):
+    @asyncio.coroutine
+    def find_all(cls, args=None, where=None, **kwargs):
         """
         Find objects by where clause
 
@@ -249,46 +255,51 @@ class Model(dict, metaclass=MetaModel):
                     args.extend(limit)
             else:
                 raise ValueError('Invalid limit value: %s' % str(limit))
-        result = await select(' '.join(sql), args)
+        result = yield from select(' '.join(sql), args)
         # 返回结果result 是字典变量 传关键字参数进去构造当前类的实例！ 好巧妙
         return [cls(**r) for r in result]
 
     @classmethod
-    async def count_rows(cls, select_field='*', where=None, args=None):
+    @asyncio.coroutine
+    def count_rows(cls, select_field='*', where=None, args=None):
         """ find number by select and where. """
         sql = ['select count(%s) _num_ from `%s`' % (select_field, cls.__table__)]
         if where:
             sql.append('where %s' % where)
-        results = await select(' '.join(sql), args, 1)  # size = 1
+        results = yield from select(' '.join(sql), args, 1)  # size = 1
         if not results:
             return 0
         return results[0].get('_num_', 0)
 
     @classmethod
-    async def find_by_primary_key(cls, primary_key):
-        result = await select('%s WHERE `%s`=?' % (cls.__select__, cls.__primary_key__), [primary_key], 1)
+    @asyncio.coroutine
+    def find_by_primary_key(cls, primary_key):
+        result = yield from select('%s WHERE `%s`=?' % (cls.__select__, cls.__primary_key__), [primary_key], 1)
         if len(result) == 0:
             return None
         return cls(**result[0])
 
-    async def save(self):
+    @asyncio.coroutine
+    def save(self):
         args = [self.get_value_or_default(self.__primary_key__)]
         args.extend(list(map(self.get_value_or_default, self.__fields__)))
-        row_affected = await execute(self.__insert__, args)
+        row_affected = yield from execute(self.__insert__, args)
         if row_affected != 1:
             logging.warning('Failed to save record, row affected: %s' % row_affected)
 
-    async def update_data(self):
+    @asyncio.coroutine
+    def update_data(self):
         # ... update 的 sql 主键在最后 ，insert , select 我都把主键放在最后了。。。 还是廖老师技高一筹啊
         # UPDATE `users` SET `admin`=?, `created_at`=?, `password`=?, `name`=?, `avatar`=?, `email`=? WHERE `id`=?
         args = list(map(self.get_value_or_default, self.__fields__))
         args.append(self.get_value_or_default(self.__primary_key__))
-        row_affected = await execute(self.__update__, args)
+        row_affected = yield from execute(self.__update__, args)
         if row_affected != 1:
             logging.warning('Failed to update, row affected: %s' % row_affected)
 
-    async def delete(self):
+    @asyncio.coroutine
+    def delete(self):
         args = [self.get_value_or_default(self.__primary_key__)]
-        row_affected = await execute(self.__delete__, args)
+        row_affected = yield from execute(self.__delete__, args)
         if row_affected != 1:
             logging.warning('Failed to delete, row affected: %s' % row_affected)

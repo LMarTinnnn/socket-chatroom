@@ -3,6 +3,7 @@
 
 import json
 import time
+import asyncio
 import logging
 import datetime
 
@@ -11,39 +12,48 @@ from urllib import parse
 
 from handlers import cookie2user, COOKIE_NAME
 
-async def logger_factory(app, handler):
-    async def logger(request):
+
+@asyncio.coroutine
+def logger_factory(app, handler):
+    @asyncio.coroutine
+    def logger(request):
         logging.info('[Logger Factory] Request: %s %s' % (request.method, request.path))
-        return await handler(request)
+        return (yield from handler(request))
     return logger
 
-async def data_factory(app, handler):
-    async def parse_data(request):
+
+@asyncio.coroutine
+def data_factory(app, handler):
+    @asyncio.coroutine
+    def parse_data(request):
         if request.method == 'POST':
             content_type = request.content_type.lower()
             if content_type.startswith('application/json'):
-                request.__data__ = await request.json()
+                request.__data__ = yield from request.json()
                 if not isinstance(request.__data__, dict):
                     return web.HTTPBadRequest(text='JSON body must be object')
                 logging.info('[Data Factory]: request json: %s' % str(request.__data__))
             elif content_type.startswith('application/x-www-form-urlencoded') \
                     or content_type.startswith('multipart/form-data'):
-                request.__data__ = await request.post()
+                request.__data__ = yield from request.post()
                 logging.info('[Data Factory]: request form: %s' % str(request.__data__))
         elif request.method == 'GET':
             query_string = request.query_string
             query_data = {k: v for k, v in parse.parse_qs(query_string, True).items()}
             request.__data__ = query_data
-        return await handler(request)
+        return (yield from handler(request))
     return parse_data
 
-async def auth_factory(app, handler):
-    async def auth(request):
+
+@asyncio.coroutine
+def auth_factory(app, handler):
+    @asyncio.coroutine
+    def auth(request):
         logging.info('[Auth_Factory]: User cookie check')
         request.__user__ = None
         cookie_str = request.cookies.get(COOKIE_NAME)
         if cookie_str:
-            user = await cookie2user(cookie_str)
+            user = yield from cookie2user(cookie_str)
             if user:
                 logging.info('[Auth_Factory]: user[%s] signs in with cookie' % user.email)
                 request.__user__ = user
@@ -52,13 +62,16 @@ async def auth_factory(app, handler):
                 logging.info('[Auth_Factory]: user\'s cookie is invalid.')
         else:
             logging.info('[Auth_Factory]: No cookie')
-        return await handler(request)
+        return (yield from handler(request))
     return auth
 
-async def response_factory(app, handler):
-    async def response(request):
+
+@asyncio.coroutine
+def response_factory(app, handler):
+    @asyncio.coroutine
+    def response(request):
         logging.info('[Response_Factory] Response to: %s %s' % (request.method, request.path))
-        raw_resp = await handler(request)
+        raw_resp = yield from handler(request)
         if isinstance(raw_resp, web.StreamResponse):
             return raw_resp
         if isinstance(raw_resp, bytes):
