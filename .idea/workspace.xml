@@ -4,12 +4,6 @@
     <list default="true" id="a9cde9db-97e8-47f2-96a9-0962df9c9534" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/handlers.py" afterPath="$PROJECT_DIR$/www/handlers.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/orm.py" afterPath="$PROJECT_DIR$/www/orm.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/blog.html" afterPath="$PROJECT_DIR$/www/templates/blog.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/blog_edit.html" afterPath="$PROJECT_DIR$/www/templates/blog_edit.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/index.html" afterPath="$PROJECT_DIR$/www/templates/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/layout.html" afterPath="$PROJECT_DIR$/www/templates/layout.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/manage_blogs.html" afterPath="$PROJECT_DIR$/www/templates/manage_blogs.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/www/templates/signup.html" afterPath="$PROJECT_DIR$/www/templates/signup.html" />
     </list>
     <ignored path="test.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,11 +23,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="handlers.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="handlers.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/www/handlers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="301" column="29" selection-start-line="301" selection-start-column="29" selection-end-line="301" selection-end-column="29" />
+            <state relative-caret-position="488">
+              <caret line="301" column="39" selection-start-line="301" selection-start-column="39" selection-end-line="301" selection-end-column="39" />
               <folding>
                 <element signature="e#48#57#0" expanded="true" />
               </folding>
@@ -41,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="orm.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="orm.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/www/orm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="297" column="4" selection-start-line="297" selection-start-column="4" selection-end-line="297" selection-end-column="4" />
+            <state relative-caret-position="216">
+              <caret line="291" column="19" selection-start-line="291" selection-start-column="19" selection-end-line="291" selection-end-column="19" />
               <folding>
                 <element signature="e#48#62#0" expanded="true" />
               </folding>
@@ -87,8 +81,8 @@
         <option value="$PROJECT_DIR$/www/factorys_and_filters.py" />
         <option value="$PROJECT_DIR$/www/conf/config.py" />
         <option value="$PROJECT_DIR$/www/app.py" />
-        <option value="$PROJECT_DIR$/www/handlers.py" />
         <option value="$PROJECT_DIR$/www/orm.py" />
+        <option value="$PROJECT_DIR$/www/handlers.py" />
       </list>
     </option>
   </component>
@@ -609,16 +603,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/www/handlers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="301" column="29" selection-start-line="301" selection-start-column="29" selection-end-line="301" selection-end-column="29" />
-          <folding>
-            <element signature="e#48#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2016.2/python_stubs/776880377/builtins.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -647,10 +631,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/www/orm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="297" column="4" selection-start-line="297" selection-start-column="4" selection-end-line="297" selection-end-column="4" />
+        <state relative-caret-position="216">
+          <caret line="291" column="19" selection-start-line="291" selection-start-column="19" selection-end-line="291" selection-end-column="19" />
           <folding>
             <element signature="e#48#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/www/handlers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="488">
+          <caret line="301" column="39" selection-start-line="301" selection-start-column="39" selection-end-line="301" selection-end-column="39" />
+          <folding>
+            <element signature="e#48#57#0" expanded="true" />
           </folding>
         </state>
       </provider>

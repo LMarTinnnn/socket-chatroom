@@ -289,7 +289,7 @@ class Model(dict, metaclass=MetaModel):
             logging.warning('Failed to save record, row affected: %s' % row_affected)
 
     @asyncio.coroutine
-    def update(self):
+    def update_data(self):
         # ... update 的 sql 主键在最后 ，insert , select 我都把主键放在最后了。。。 还是廖老师技高一筹啊
         # UPDATE `users` SET `admin`=?, `created_at`=?, `password`=?, `name`=?, `avatar`=?, `email`=? WHERE `id`=?
         args = list(map(self.get_value_or_default, self.__fields__))

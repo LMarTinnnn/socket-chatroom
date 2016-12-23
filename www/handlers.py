@@ -299,5 +299,5 @@ def api_edit_blog(request, *, name, summary, content, blog_id):
     blog_to_edit.name = name
     blog_to_edit.summary = summary
     blog_to_edit.content = content
-    yield from blog_to_edit.update()
+    yield from blog_to_edit.update_data()
     return blog_to_edit
